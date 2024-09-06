@@ -1,17 +1,15 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const bookRoutes = require("./routes/bookRoutes");
+const router = express.Router();
+const Book = require("../models/bookModel");
 
-const app = express();
-const PORT = 3000;
-
-mongoose.connect("mongodb://localhost/booklibrary", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+// Update book by ID
+router.put("/:id", async (req, res) => {
+  try {
+    const book = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(book);
+  } catch (err) {
+    res.status(400).send(err);
+  }
 });
 
-app.use(bodyParser.json());
-app.use("/api/books", bookRoutes);
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+module.exports = router;
